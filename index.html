@@ -4,439 +4,98 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#071018">
-<title>Rhythm Route v0.4</title>
+<title>Rhythm Route v0.5.1 TOUCH FIX</title>
 <style>
-:root{
-  --bg:#071018;--panel:#0d1922;--panel2:#10232d;--line:#29434f;
-  --text:#eef5f5;--muted:#8ea5af;--cyan:#55d5d0;--amber:#ffbd4a;--red:#ff625a;
-}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif}
-body{overflow:hidden}
-button{font:inherit;color:inherit}
-.app{height:100dvh;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 10px env(safe-area-inset-bottom);background:
-radial-gradient(circle at 50% 15%,rgba(61,167,174,.10),transparent 32%),
-linear-gradient(#071018,#08141d 60%,#09121a)}
-header{height:58px;display:flex;align-items:center;border-bottom:1px solid #233a47;flex:none}
-.brand{font-size:18px;font-weight:950;letter-spacing:.4px}
-.brand b{color:var(--amber)}
-.version{font-size:9px;color:#6e8792;margin-left:5px}
-.topBtns{margin-left:auto;display:flex;gap:6px}
-.topBtns button{border:1px solid #2d4856;background:#0f2029;border-radius:9px;padding:6px 9px;font-size:11px}
-.stageMeta{text-align:right;font-size:10px;color:var(--muted);margin-left:8px}
-.stageMeta strong{display:block;color:#fff;font-size:14px}
-.board{position:relative;flex:1;min-height:0;overflow:hidden}
-.skyline{position:absolute;left:0;right:0;bottom:0;height:25%;opacity:.18;pointer-events:none;background:
-linear-gradient(to top,rgba(15,34,44,.9),transparent),
-repeating-linear-gradient(90deg,transparent 0 21px,rgba(255,189,74,.14) 22px 24px,transparent 25px 41px)}
-.tip{position:absolute;z-index:2;left:50%;top:7px;transform:translateX(-50%);padding:7px 10px;border:1px solid #29414f;border-radius:999px;background:#09151ddd;color:#c7d5da;font-size:11px;white-space:nowrap;max-width:84%;overflow:hidden;text-overflow:ellipsis}
-.beat{position:absolute;z-index:3;right:4px;top:45px;width:57px;height:57px;border:2px solid #345362;border-radius:50%;display:grid;place-items:center;text-align:center;font-size:9px;color:#91a7b1;background:#08151dcc;transition:.08s}
-.beat b{font-size:22px;color:#fff;line-height:1}
-.beat.pulse{transform:scale(1.13);border-color:var(--amber);box-shadow:0 0 22px rgba(255,189,74,.18)}
-svg{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
-.edge{stroke:#28424e;stroke-width:4;stroke-linecap:round}
-.route{fill:none;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;opacity:.42}
-.route.sel{opacity:.96;filter:drop-shadow(0 0 4px rgba(255,255,255,.15))}
-.node{fill:#10242f;stroke:#68828e;stroke-width:2}
-.node.next{stroke:#fff;stroke-width:4;filter:drop-shadow(0 0 4px rgba(255,255,255,.35))}
-.goal{fill:#0b1921;stroke-width:5}
-.agent{stroke:#071018;stroke-width:4;filter:drop-shadow(0 0 4px rgba(0,0,0,.5))}
-.waitmark{fill:#ffbd4a}
-.panel{flex:none;border-top:1px solid #243845;padding:8px 0 4px;display:grid;gap:7px;background:#09151ddd}
-.people{display:flex;gap:6px;overflow:auto;scrollbar-width:none}
-.people::-webkit-scrollbar{display:none}
-.person{flex:none;border:1px solid #304a58;background:#0e1c25;padding:7px 10px;border-radius:10px;font-size:11px;text-align:left}
-.person.on{border-color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.16) inset}
-.person.done{background:#0d271d}
-.person b{font-size:12px}
-.info{display:flex;justify-content:space-between;color:#93a9b3;font-size:11px}
-.info strong{color:#fff}
-.actions{display:grid;grid-template-columns:1fr 1fr 1.35fr;gap:7px}
-.actions button{border:1px solid #304a58;background:#11232d;min-height:45px;border-radius:10px;font-weight:850;font-size:13px}
-.actions button:disabled{opacity:.35}
-.actions .start{background:var(--amber);color:#0b151b;border-color:#ffcb6e;font-weight:950}
-.overlay{position:absolute;z-index:10;inset:0;background:#041019e8;display:grid;place-items:center;padding:16px;backdrop-filter:blur(5px)}
-.overlay.hide{display:none}
-.card{width:min(380px,94vw);background:#10212b;border:1px solid #36505d;border-radius:18px;padding:18px;text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.42)}
-.card h2{margin:5px 0;font-size:26px}
-.card p{font-size:12px;color:#b8c8ce;line-height:1.55}
-.card button{width:100%;margin-top:8px;min-height:45px;border:0;border-radius:10px;background:var(--amber);color:#08131a;font-weight:950}
-.card .secondary{background:#18303c;color:#fff;border:1px solid #395460}
-.eyebrow{font-size:10px;letter-spacing:2px;color:var(--cyan);font-weight:900}
-.stars{font-size:37px;color:var(--amber);letter-spacing:4px;margin:6px 0}
-.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:12px 0}
-.resultBox{background:#0b171f;border-radius:10px;padding:9px}
-.resultBox span{display:block;font-size:9px;color:#8199a4}
-.resultBox b{font-size:15px}
-.good{color:var(--cyan)} .bad{color:var(--red)}
-.mapTitle{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:10px}
-.mapTitle h2{text-align:left;margin:0}
-.mapTitle div{text-align:right;color:#8ba0aa;font-size:10px}
-.levelMap{display:grid;grid-template-columns:repeat(5,1fr);gap:10px 8px;margin:14px 0}
-.level{aspect-ratio:1;border-radius:50%;border:2px solid #35515e;background:#10232d;position:relative;font-weight:950;font-size:16px}
-.level.lock{opacity:.25}
-.level.current{border-color:var(--amber);box-shadow:0 0 18px rgba(255,189,74,.18)}
-.level .miniStars{position:absolute;left:50%;bottom:-15px;transform:translateX(-50%);font-size:9px;letter-spacing:0;color:var(--amber);white-space:nowrap}
-.worldProgress{margin:15px 0 8px;background:#0a171e;border-radius:10px;padding:10px;font-size:11px;color:#9cb0b9}
-.worldProgress b{color:#fff}
-.smallNote{font-size:10px;color:#7d929c;margin-top:10px}
-#mapBtn{display:none}
+:root{--bg:#071018;--line:#29434f;--text:#eef5f5;--muted:#8da4af;--amber:#ffbd4a;--cyan:#55d5d0;--red:#ff625a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif}body{overflow:hidden}button{font:inherit;color:inherit}
+.app{height:100dvh;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 10px env(safe-area-inset-bottom);background:radial-gradient(circle at 50% 15%,rgba(68,177,181,.10),transparent 33%),linear-gradient(#071018,#09141c 70%,#0b1319)}
+header{height:57px;flex:none;display:flex;align-items:center;border-bottom:1px solid #223946}.brand{font-size:18px;font-weight:950;letter-spacing:.4px}.brand b{color:var(--amber)}.ver{font-size:9px;color:#6f8792;margin-left:5px}.meta{margin-left:auto;text-align:right;color:var(--muted);font-size:10px}.meta strong{display:block;color:#fff;font-size:14px}
+.board{position:relative;flex:1;min-height:0;overflow:hidden}.tip{position:absolute;z-index:4;left:50%;top:7px;transform:translateX(-50%);max-width:82%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:7px 10px;border:1px solid #29414f;border-radius:999px;background:#09151de6;color:#c9d6db;font-size:11px}.beat{position:absolute;z-index:4;right:4px;top:45px;width:57px;height:57px;border:2px solid #345362;border-radius:50%;display:grid;place-items:center;text-align:center;font-size:9px;color:#91a7b1;background:#08151dd9;transition:.08s}.beat b{font-size:22px;color:#fff;line-height:1}.beat.pulse{transform:scale(1.13);border-color:var(--amber);box-shadow:0 0 22px rgba(255,189,74,.20)}
+svg{position:absolute;inset:0;width:100%;height:100%;touch-action:none}.edge{stroke:#28424e;stroke-width:4;stroke-linecap:round;pointer-events:none}.route{fill:none;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;opacity:.40;pointer-events:none}.route.sel{opacity:.98;filter:drop-shadow(0 0 4px rgba(255,255,255,.12))}.node{fill:#10242f;stroke:#68828e;stroke-width:2}.node.next{stroke:#fff;stroke-width:4;filter:drop-shadow(0 0 4px rgba(255,255,255,.35))}.goal{fill:#0b1921;stroke-width:5;pointer-events:none}.personG{pointer-events:none;filter:drop-shadow(0 0 4px rgba(0,0,0,.45))}.personHead{stroke:#071018;stroke-width:2}.personBody{stroke-width:5;stroke-linecap:round}.personLeg{stroke-width:3.5;stroke-linecap:round}
+.panel{flex:none;border-top:1px solid #243845;padding:8px 0 4px;display:grid;gap:7px;background:#09151de8}.people{display:flex;gap:6px;overflow:auto;scrollbar-width:none}.people::-webkit-scrollbar{display:none}.personBtn{flex:none;border:1px solid #304a58;background:#0e1c25;padding:7px 10px;border-radius:10px;font-size:11px;text-align:left}.personBtn.on{border-color:#fff}.personBtn.done{background:#0d271d}.personBtn b{font-size:12px}.info{display:flex;justify-content:space-between;color:#93a9b3;font-size:11px}.info strong{color:#fff}.actions{display:grid;grid-template-columns:1fr 1.45fr;gap:7px}.actions button{border:1px solid #304a58;background:#11232d;min-height:46px;border-radius:10px;font-weight:850}.actions button:disabled{opacity:.35}.actions .start{background:var(--amber);color:#0b151b;border-color:#ffcb6e;font-weight:950}
+.overlay{position:absolute;z-index:10;inset:0;background:#041019e8;display:grid;place-items:center;padding:16px;backdrop-filter:blur(5px)}.overlay.hide{display:none}.card{width:min(390px,94vw);background:#10212b;border:1px solid #36505d;border-radius:18px;padding:18px;text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.42)}.card h2{margin:4px 0;font-size:27px}.card p{font-size:12px;color:#b8c8ce;line-height:1.55}.card button{width:100%;margin-top:8px;min-height:45px;border:0;border-radius:10px;background:var(--amber);color:#08131a;font-weight:950}.card .secondary{background:#18303c;color:#fff;border:1px solid #395460}.eyebrow{font-size:10px;letter-spacing:2px;color:var(--cyan);font-weight:900}.stars{font-size:38px;color:var(--amber);letter-spacing:4px;margin:6px 0}.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:12px 0}.resultBox{background:#0b171f;border-radius:10px;padding:9px}.resultBox span{display:block;font-size:9px;color:#8199a4}.resultBox b{font-size:15px}.good{color:var(--cyan)}.bad{color:var(--red)}.levels{display:grid;grid-template-columns:repeat(5,1fr);gap:11px;margin:18px 0 9px}.level{aspect-ratio:1;border-radius:50%;border:2px solid #385462;background:#10232d;font-size:17px;font-weight:950;position:relative}.level.lock{opacity:.25}.level.current{border-color:var(--amber);box-shadow:0 0 18px rgba(255,189,74,.18)}.level span{position:absolute;left:50%;bottom:-15px;transform:translateX(-50%);font-size:9px;color:var(--amber);white-space:nowrap}.progress{background:#0a171e;border-radius:10px;padding:10px;font-size:11px;color:#9cb0b9}.progress b{color:#fff}.flash{position:absolute;z-index:8;inset:0;pointer-events:none;opacity:0;background:radial-gradient(circle at center,rgba(255,216,118,.40),rgba(85,213,208,.10),transparent 63%)}.flash.go{animation:flash .55s ease-out}@keyframes flash{0%{opacity:0}18%{opacity:1}100%{opacity:0}}
 </style>
 </head>
 <body>
 <div class="app">
-<header>
-  <div class="brand">RHYTHM <b>ROUTE</b><span class="version">v0.4</span></div>
-  <div class="topBtns">
-    <button id="mapBtn">MAP</button>
-    <button id="musicBtn">♫ CITY POP</button>
-  </div>
-  <div class="stageMeta"><strong id="stageName">WORLD 1</strong><span id="stageSub">FIRST FLOW</span></div>
-</header>
-
+<header><div class="brand">RHYTHM <b>ROUTE</b><span class="ver">v0.5.1 TOUCH FIX</span></div><div class="meta"><strong id="stageTitle">CORE LOCK</strong><span id="stageSub">5 STAGES</span></div></header>
 <main class="board">
-  <div class="skyline"></div>
-  <div class="tip" id="tip">스테이지를 선택하세요</div>
-  <div class="beat" id="beat"><div><b id="beatN">—</b><br>BEAT</div></div>
-  <svg id="svg" viewBox="0 0 360 520"></svg>
-
-  <div class="overlay" id="world">
-    <div class="card">
-      <div class="eyebrow">WORLD 1</div>
-      <div class="mapTitle">
-        <h2>FIRST FLOW</h2>
-        <div>경로 + 박자<br>첫 10 스테이지</div>
-      </div>
-      <div class="levelMap" id="levelMap"></div>
-      <div class="worldProgress">누적 별 <b id="totalStars">0 / 30</b></div>
-      <p>⭐ 전원 도착 · ⭐⭐ 최적해 근접 · ⭐⭐⭐ PERFECT FLOW</p>
-      <div class="smallNote">별 1개만 받아도 다음 스테이지가 열립니다.</div>
-    </div>
-  </div>
-
-  <div class="overlay hide" id="result">
-    <div class="card">
-      <div class="eyebrow" id="resultEye">CLEAR</div>
-      <h2 id="resultTitle">PERFECT FLOW</h2>
-      <div class="stars" id="resultStars">★★★</div>
-      <p id="resultMsg"></p>
-      <div class="resultGrid">
-        <div class="resultBox"><span>내 완료 박자</span><b id="myBeats">0</b></div>
-        <div class="resultBox"><span>PERFECT 박자</span><b id="optBeats">0</b></div>
-        <div class="resultBox"><span>내 총 행동</span><b id="myActions">0</b></div>
-        <div class="resultBox"><span>PERFECT 행동</span><b id="optActions">0</b></div>
-      </div>
-      <button id="nextBtn">다음 스테이지</button>
-      <button class="secondary" id="retryBtn">같은 스테이지 다시 풀기</button>
-      <button class="secondary" id="mapResultBtn">스테이지 맵</button>
-    </div>
-  </div>
+<div class="tip" id="tip">스테이지를 선택하세요</div><div class="beat" id="beat"><div><b id="beatN">—</b><br>BEAT</div></div><svg id="svg" viewBox="0 0 360 520"></svg><div class="flash" id="flash"></div>
+<div class="overlay" id="mapOverlay"><div class="card"><div class="eyebrow">CORE LOCK TEST</div><h2>FIRST 5</h2><p>길을 설계하고 START. 모든 사람은 <b>매 박 반드시 한 칸</b> 움직입니다.<br>⭐ 클리어 · ⭐⭐ 근접 · ⭐⭐⭐ 최소 박자에 전원 동시 도착</p><div class="levels" id="levels"></div><div class="progress">누적 별 <b id="totalStars">0 / 15</b></div></div></div>
+<div class="overlay hide" id="resultOverlay"><div class="card"><div class="eyebrow" id="resultEye">CLEAR</div><h2 id="resultTitle">PERFECT FLOW</h2><div class="stars" id="resultStars">★★★</div><p id="resultMsg"></p><div class="resultGrid"><div class="resultBox"><span>전체 완료 박자</span><b id="finishBeat">0</b></div><div class="resultBox"><span>PERFECT 박자</span><b id="perfectBeat">0</b></div><div class="resultBox"><span>도착 박자</span><b id="arrivalBeats">—</b></div><div class="resultBox"><span>SYNC</span><b id="syncResult">—</b></div></div><button id="nextBtn">다음 스테이지</button><button class="secondary" id="retryBtn">다시 풀기</button><button class="secondary" id="mapBtn">스테이지 선택</button></div></div>
 </main>
-
-<section class="panel">
-  <div class="people" id="people"></div>
-  <div class="info">
-    <span>예상 <strong id="planBeats">—</strong>박 / <strong id="planActions">—</strong>행동</span>
-    <span>PERFECT <strong id="perfectText">—</strong></span>
-  </div>
-  <div class="actions">
-    <button id="undoBtn">↶ 한 칸</button>
-    <button id="waitBtn">Ⅱ WAIT</button>
-    <button id="startBtn" class="start">START ▶</button>
-  </div>
-</section>
+<section class="panel"><div class="people" id="people"></div><div class="info"><span>현재 최장 경로 <strong id="planBeat">—</strong>박</span><span>PERFECT <strong id="targetBeat">—</strong>박 SYNC</span></div><div class="actions"><button id="undoBtn">↶ 한 칸</button><button class="start" id="startBtn">START ▶</button></div></section>
 </div>
-
 <script>
+'use strict';
 const NS='http://www.w3.org/2000/svg';
 const COLORS=['#55d5d0','#ffbd4a','#ff625a','#a582ff','#76df86'];
-const POS=[[35,85],[115,60],[205,80],[315,80],[65,185],[155,165],[255,170],[325,205],[35,290],[125,275],[220,275],[320,300],[70,400],[165,420],[255,405],[325,430]];
+const POS=[[42,92],[130,62],[225,78],[315,98],[70,190],[165,170],[260,180],[322,220],[35,292],[125,278],[220,285],[318,310],[70,405],[165,425],[255,402],[326,435]];
 const EDGES=[[0,1],[0,4],[1,2],[1,4],[1,5],[2,3],[2,5],[2,6],[3,6],[3,7],[4,5],[4,8],[4,9],[5,6],[5,9],[5,10],[6,7],[6,10],[6,11],[7,11],[8,9],[8,12],[9,10],[9,12],[9,13],[10,11],[10,13],[10,14],[11,14],[11,15],[12,13],[13,14],[14,15]];
-const ADJ=Array.from({length:POS.length},()=>[]);
-EDGES.forEach(([a,b])=>{ADJ[a].push(b);ADJ[b].push(a)});
-
+const ADJ=Array.from({length:POS.length},()=>[]);EDGES.forEach(([a,b])=>{ADJ[a].push(b);ADJ[b].push(a)});
 const STAGES=[
- {name:'첫 합주',bpm:104,optB:3,optA:6,a:[[0,10],[3,5],[12,13]],tip:'세 사람 모두 목적지까지 연결해보세요'},
- {name:'엇박 입문',bpm:106,optB:4,optA:6,a:[[7,8],[11,15],[10,6]],tip:'최단길끼리 겹치면 한 명의 타이밍을 바꿔보세요'},
- {name:'교차점',bpm:108,optB:4,optA:8,a:[[0,14],[11,5],[12,10]],tip:'같은 박자에 같은 원으로 들어가면 충돌합니다'},
- {name:'짧은 우회',bpm:110,optB:4,optA:7,a:[[0,9],[2,3],[7,8]],tip:'모두 최단거리일 필요는 없습니다'},
- {name:'한 박 쉬기',bpm:112,optB:4,optA:10,a:[[4,15],[7,8],[13,6]],tip:'WAIT 한 번이 긴 우회보다 좋을 수 있어요'},
- {name:'흐름 바꾸기',bpm:114,optB:5,optA:8,a:[[9,12],[11,2],[15,0]],tip:'먼저 지나갈 사람을 정하면 길이 보입니다'},
- {name:'중앙 집중',bpm:116,optB:5,optA:9,a:[[0,15],[13,3],[7,11]],tip:'중앙을 누가 먼저 쓰는지 생각해보세요'},
- {name:'두 갈래',bpm:118,optB:5,optA:9,a:[[8,13],[1,6],[0,15]],tip:'비슷한 길 중 전체 박자가 짧은 쪽을 찾으세요'},
- {name:'프리 퍼즐',bpm:120,optB:5,optA:9,a:[[9,2],[15,0],[14,7]],tip:'클리어 후 별 3개 해법을 다시 찾아보세요'},
- {name:'FIRST FLOW',bpm:122,optB:5,optA:17,a:[[0,15],[3,12],[8,7],[11,4]],tip:'네 사람을 하나의 안무처럼 흘려보내세요'}
+{name:'TWO STEPS',bpm:96,perfectBeat:2,a:[[0,5],[3,6]],tip:'두 사람을 같은 박자에 도착시켜보세요'},
+{name:'FIRST CROSS',bpm:100,perfectBeat:3,a:[[0,6],[3,5]],tip:'가장 짧은 길만 고르면 서로 부딪힐 수 있어요'},
+{name:'THREE FLOW',bpm:104,perfectBeat:3,a:[[0,9],[3,6],[12,13]],tip:'세 사람의 경로 길이와 교차 타이밍을 함께 보세요'},
+{name:'DETOUR',bpm:108,perfectBeat:4,a:[[0,10],[3,5],[8,13]],tip:'누군가의 우회가 전체 흐름을 더 좋게 만들 수 있어요'},
+{name:'CORE TEST',bpm:112,perfectBeat:5,a:[[0,14],[3,12],[8,7]],tip:'최소 박자에 모두 같은 순간 도착시키세요'}
 ];
-
-const $=id=>document.getElementById(id);
-const svg=$('svg');
-let stageIndex=0,stage=null,agents=[],selected=0,running=false,steps=[],beatNo=0,timer=null;
-let musicOn=true,audioCtx=null,subTimers=[];
-let progress=loadProgress();
-
-function loadProgress(){
-  try{
-    const p=JSON.parse(localStorage.getItem('rhythmRouteV04')||'null');
-    if(p && Array.isArray(p.stars)) return p;
-  }catch(e){}
-  return {stars:Array(10).fill(0),unlocked:1};
+const $=id=>document.getElementById(id),svg=$('svg');
+let stageIndex=0,stage=null,agents=[],selected=0,running=false,dragging=false,exec=null,beatNo=0,timer=null,audioCtx=null,renderRAF=null,progress=loadProgress(),lastTickTime=0,tickDuration=600,finishPending=false;
+function loadProgress(){try{const p=JSON.parse(localStorage.getItem('rhythmRouteV05')||'null');if(p&&Array.isArray(p.stars))return p}catch(e){}return{stars:Array(STAGES.length).fill(0),unlocked:1}}
+function saveProgress(){try{localStorage.setItem('rhythmRouteV05',JSON.stringify(progress))}catch(e){}}
+function sEl(name,attrs={}){const x=document.createElementNS(NS,name);for(const[k,v]of Object.entries(attrs))x.setAttribute(k,String(v));return x}
+function last(a){return a[a.length-1]}
+function buildMap(){const box=$('levels');box.innerHTML='';let total=0;STAGES.forEach((s,i)=>{total+=progress.stars[i]||0;const b=document.createElement('button');const locked=i>=progress.unlocked;b.className='level '+(locked?'lock ':'')+(i===progress.unlocked-1?'current':'');b.disabled=locked;b.innerHTML=(i+1)+`<span>${'★'.repeat(progress.stars[i]||0)}${'☆'.repeat(3-(progress.stars[i]||0))}</span>`;b.onclick=()=>{$('mapOverlay').classList.add('hide');loadStage(i)};box.appendChild(b)});$('totalStars').textContent=`${total} / ${STAGES.length*3}`}
+function showMap(){stopRun();buildMap();svg.innerHTML='';$('mapOverlay').classList.remove('hide');$('resultOverlay').classList.add('hide');$('stageTitle').textContent='CORE LOCK';$('stageSub').textContent='5 STAGES';$('tip').textContent='스테이지를 선택하세요';$('beatN').textContent='—'}
+function loadStage(i){stopRun();stageIndex=i;stage=STAGES[i];agents=stage.a.map((p,k)=>({s:p[0],g:p[1],r:[p[0]],c:COLORS[k%COLORS.length]}));selected=0;running=false;dragging=false;exec=null;beatNo=0;finishPending=false;$('stageTitle').textContent=`STAGE ${i+1} · ${stage.name}`;$('stageSub').textContent=`${agents.length} PEOPLE · ${stage.bpm} BPM`;$('tip').textContent=stage.tip;$('beatN').textContent='—';tickDuration=60000/stage.bpm;drawStatic();updateUI();startRenderLoop()}
+function stopRun(){if(timer){clearInterval(timer);timer=null}running=false;dragging=false;finishPending=false;exec=null}
+function startRenderLoop(){if(renderRAF)cancelAnimationFrame(renderRAF);const loop=now=>{renderFrame(now);renderRAF=requestAnimationFrame(loop)};renderRAF=requestAnimationFrame(loop)}
+function pathD(r){return r.map((n,i)=>(i?'L':'M')+POS[n][0]+' '+POS[n][1]).join(' ')}
+function createPersonGroup(color,i){const g=sEl('g',{class:'personG'});const body=sEl('line',{x1:0,y1:-2,x2:0,y2:10,stroke:color,class:'personBody'});const l1=sEl('line',{x1:0,y1:9,x2:-5,y2:16,stroke:color,class:'personLeg'});const l2=sEl('line',{x1:0,y1:9,x2:5,y2:16,stroke:color,class:'personLeg'});const head=sEl('circle',{cx:0,cy:-8,r:6,fill:color,class:'personHead'});head.dataset.head='1';g.append(body,l1,l2,head);return g}
+function drawStatic(){svg.innerHTML='';EDGES.forEach(([a,b])=>svg.appendChild(sEl('line',{x1:POS[a][0],y1:POS[a][1],x2:POS[b][0],y2:POS[b][1],class:'edge'})));agents.forEach((a,i)=>{if(a.r.length>1)svg.appendChild(sEl('path',{d:pathD(a.r),stroke:a.c,class:'route '+(i===selected?'sel':'')}))});const current=agents[selected]?last(agents[selected].r):-1;POS.forEach((p,i)=>{const n=sEl('circle',{cx:p[0],cy:p[1],r:10,class:'node '+(!running&&ADJ[current]?.includes(i)?'next':'')});n.dataset.n=i;svg.appendChild(n)});agents.forEach((a,i)=>{const p=POS[a.g];svg.appendChild(sEl('circle',{cx:p[0],cy:p[1],r:18+i*1.5,stroke:a.c,class:'goal'}))});agents.forEach((a,i)=>{const g=createPersonGroup(a.c,i);g.dataset.agent=i;svg.appendChild(g)})}
+function personWorldPosition(i,now){const a=agents[i];if(!running||!exec){const p=POS[a.s];return{x:p[0],y:p[1],visible:true}}if(exec.arrived[i])return{x:POS[a.g][0],y:POS[a.g][1],visible:false};const from=POS[exec.prev[i]],to=POS[exec.next[i]];let t=Math.min(1,Math.max(0,(now-lastTickTime)/(tickDuration*.72)));t=t*t*(3-2*t);return{x:from[0]+(to[0]-from[0])*t,y:from[1]+(to[1]-from[1])*t,visible:true}}
+function renderFrame(now){if(!stage||!$('mapOverlay').classList.contains('hide'))return;const groups=[...svg.querySelectorAll('.personG')];groups.forEach((g,i)=>{const p=personWorldPosition(i,now);g.style.display=p.visible?'':'none';const phase=(now/1000)*(stage.bpm/60)*Math.PI*2,bob=Math.sin(phase)*1.8,tilt=Math.sin(phase)*4.2;g.setAttribute('transform',`translate(${p.x} ${p.y+bob}) rotate(${tilt})`);const head=g.querySelector('[data-head="1"]');if(head)head.setAttribute('cy',String(-8+Math.max(0,Math.sin(phase))*1.2))})}
+function updateUI(){const box=$('people');box.innerHTML='';agents.forEach((a,i)=>{const b=document.createElement('button'),done=last(a.r)===a.g;b.className='personBtn '+(i===selected?'on ':'')+(done?'done':'');b.innerHTML=`<b style="color:${a.c}">사람 ${i+1}</b><br>${done?`${a.r.length-1}박 경로 완료`:'경로 설계 중'}`;b.onclick=()=>{if(!running){selected=i;drawStatic();updateUI()}};box.appendChild(b)});const maxLen=Math.max(...agents.map(a=>a.r.length-1));$('planBeat').textContent=maxLen||'—';$('targetBeat').textContent=stage.perfectBeat;$('undoBtn').disabled=running||agents[selected].r.length<=1;$('startBtn').disabled=running}
+function flashTip(msg){const old=stage.tip;$('tip').textContent=msg;setTimeout(()=>{if(stage)$('tip').textContent=old},1000)}
+function clientToSvg(clientX,clientY){
+  const pt=svg.createSVGPoint();pt.x=clientX;pt.y=clientY;
+  const ctm=svg.getScreenCTM();
+  if(ctm){const q=pt.matrixTransform(ctm.inverse());return{x:q.x,y:q.y}}
+  const r=svg.getBoundingClientRect();return{x:(clientX-r.left)/r.width*360,y:(clientY-r.top)/r.height*520};
 }
-function saveProgress(){
-  try{localStorage.setItem('rhythmRouteV04',JSON.stringify(progress));}catch(e){}
+function nearestNode(clientX,clientY){const q=clientToSvg(clientX,clientY);let best=-1,bd=1e9;POS.forEach((p,i)=>{const d=(p[0]-q.x)**2+(p[1]-q.y)**2;if(d<bd){bd=d;best=i}});return bd<=36*36?best:-1}
+function eventNode(e){
+  const t=e.target;
+  if(t&&t.dataset&&t.dataset.n!==undefined)return Number(t.dataset.n);
+  return nearestNode(e.clientX,e.clientY);
 }
-function nodeEl(name,attrs={}){
-  const x=document.createElementNS(NS,name);
-  Object.entries(attrs).forEach(([k,v])=>x.setAttribute(k,v));
-  return x;
+function tryAddNode(n){if(running||n<0)return;const a=agents[selected],cur=last(a.r);if(n===cur||!ADJ[cur].includes(n))return;if(a.r.length>=2&&a.r[a.r.length-2]===n)return;a.r.push(n);drawStatic();updateUI()}
+function onDown(e){if(running)return;const n=eventNode(e);if(n<0)return;dragging=true;svg.setPointerCapture?.(e.pointerId);tryAddNode(n);e.preventDefault()}
+function onMove(e){if(dragging&&!running){tryAddNode(nearestNode(e.clientX,e.clientY));e.preventDefault()}}
+function onUp(){dragging=false}
+if('PointerEvent' in window){
+  svg.addEventListener('pointerdown',onDown,{passive:false});
+  svg.addEventListener('pointermove',onMove,{passive:false});
+  svg.addEventListener('pointerup',onUp);
+  svg.addEventListener('pointercancel',onUp);
+}else{
+  svg.addEventListener('touchstart',e=>{const t=e.touches[0];if(!t)return;onDown({target:e.target,clientX:t.clientX,clientY:t.clientY,pointerId:1,preventDefault:()=>e.preventDefault()})},{passive:false});
+  svg.addEventListener('touchmove',e=>{const t=e.touches[0];if(!t)return;onMove({clientX:t.clientX,clientY:t.clientY,preventDefault:()=>e.preventDefault()})},{passive:false});
+  svg.addEventListener('touchend',onUp);
 }
-function last(arr){return arr[arr.length-1]}
-
-function buildMap(){
-  const box=$('levelMap'); box.innerHTML='';
-  let total=0;
-  STAGES.forEach((s,i)=>{
-    total+=progress.stars[i]||0;
-    const b=document.createElement('button');
-    const locked=i>=progress.unlocked;
-    b.className='level '+(locked?'lock ':'')+(i===progress.unlocked-1?'current':'');
-    b.innerHTML=(i+1)+`<span class="miniStars">${'★'.repeat(progress.stars[i]||0)}${'☆'.repeat(3-(progress.stars[i]||0))}</span>`;
-    b.disabled=locked;
-    b.onclick=()=>{if(!locked){$('world').classList.add('hide');$('mapBtn').style.display='inline-block';loadStage(i)}};
-    box.appendChild(b);
-  });
-  $('totalStars').textContent=`${total} / 30`;
-}
-function showMap(){
-  stopRun();
-  buildMap();
-  $('world').classList.remove('hide');
-  $('result').classList.add('hide');
-  $('mapBtn').style.display='none';
-  $('stageName').textContent='WORLD 1';
-  $('stageSub').textContent='FIRST FLOW';
-  $('tip').textContent='스테이지를 선택하세요';
-  $('beatN').textContent='—';
-  svg.innerHTML='';
-}
-$('mapBtn').onclick=showMap;
-$('mapResultBtn').onclick=showMap;
-
-function loadStage(i){
-  stopRun();
-  stageIndex=i; stage=STAGES[i];
-  agents=stage.a.map((x,k)=>({s:x[0],g:x[1],r:[x[0]],c:COLORS[k%COLORS.length]}));
-  selected=0;running=false;beatNo=0;
-  $('stageName').textContent=`STAGE ${i+1} · ${stage.name}`;
-  $('stageSub').textContent=`${agents.length}명 · ${stage.bpm} BPM`;
-  $('tip').textContent=stage.tip;
-  $('beatN').textContent='—';
-  draw(); updateUI();
-}
-function stopRun(){
-  if(timer){clearInterval(timer);timer=null}
-  subTimers.forEach(t=>clearTimeout(t));subTimers=[];
-  running=false;
-}
-function routeD(r){
-  return r.map((n,i)=>(i?'L':'M')+POS[n][0]+' '+POS[n][1]).join(' ');
-}
-function draw(execPositions=null){
-  svg.innerHTML='';
-  EDGES.forEach(([a,b])=>{
-    svg.append(nodeEl('line',{x1:POS[a][0],y1:POS[a][1],x2:POS[b][0],y2:POS[b][1],class:'edge'}));
-  });
-
-  agents.forEach((a,i)=>{
-    if(a.r.length>1){
-      svg.append(nodeEl('path',{d:routeD(a.r),stroke:a.c,class:'route '+(i===selected?'sel':'')}));
-      for(let j=1;j<a.r.length;j++){
-        if(a.r[j]===a.r[j-1]){
-          const p=POS[a.r[j]];
-          svg.append(nodeEl('circle',{cx:p[0]+11,cy:p[1]-11,r:5,class:'waitmark'}));
-        }
-      }
-    }
-  });
-
-  const current=agents[selected] ? last(agents[selected].r) : -1;
-  POS.forEach((p,i)=>{
-    const c=nodeEl('circle',{cx:p[0],cy:p[1],r:10,class:'node '+(!running&&ADJ[current]?.includes(i)?'next':'')});
-    c.dataset.n=i;
-    svg.append(c);
-  });
-
-  agents.forEach((a,i)=>{
-    const p=POS[a.g];
-    svg.append(nodeEl('circle',{cx:p[0],cy:p[1],r:18+i*1.5,stroke:a.c,class:'goal'}));
-  });
-
-  agents.forEach((a,i)=>{
-    const p=execPositions?execPositions[i]:POS[a.s];
-    const q=nodeEl('circle',{cx:p[0],cy:p[1],r:9,fill:a.c,class:'agent'});
-    svg.append(q);
-  });
-}
-function updateUI(){
-  const people=$('people');people.innerHTML='';
-  agents.forEach((a,i)=>{
-    const b=document.createElement('button');
-    const done=last(a.r)===a.g;
-    b.className='person '+(i===selected?'on ':'')+(done?'done':'');
-    b.innerHTML=`<b style="color:${a.c}">사람 ${i+1}</b><br>${done?'경로 완료':'경로 설계 중'}`;
-    b.onclick=()=>{if(!running){selected=i;draw();updateUI()}};
-    people.appendChild(b);
-  });
-  const beats=Math.max(...agents.map(a=>a.r.length-1));
-  const actions=agents.reduce((s,a)=>s+a.r.length-1,0);
-  $('planBeats').textContent=beats||'—';
-  $('planActions').textContent=actions||'—';
-  $('perfectText').textContent=`${stage.optB}박 / ${stage.optA}행동`;
-  $('undoBtn').disabled=running||agents[selected].r.length<=1;
-  $('waitBtn').disabled=running;
-  $('startBtn').disabled=running;
-}
-function flashTip(msg){
-  const old=stage.tip;$('tip').textContent=msg;
-  const t=setTimeout(()=>$('tip').textContent=old,1100);subTimers.push(t);
-}
-svg.addEventListener('pointerdown',e=>{
-  if(running)return;
-  const t=e.target.closest('.node'); if(!t)return;
-  const n=+t.dataset.n,a=agents[selected],cur=last(a.r);
-  if(n===cur)return;
-  if(!ADJ[cur].includes(n)){flashTip('밝은 원만 선택할 수 있어요');return}
-  a.r.push(n);draw();updateUI();
-});
-$('undoBtn').onclick=()=>{
-  if(running)return;
-  const a=agents[selected];if(a.r.length>1)a.r.pop();
-  draw();updateUI();
-};
-$('waitBtn').onclick=()=>{
-  if(running)return;
-  const a=agents[selected];a.r.push(last(a.r));
-  flashTip('WAIT +1박');
-  draw();updateUI();
-};
-
-function ensureAudio(){
-  try{
-    audioCtx??=new(window.AudioContext||window.webkitAudioContext)();
-    if(audioCtx.state==='suspended')audioCtx.resume();
-  }catch(e){}
-}
-function tone(freq,dur=.07,type='square',vol=.035,when=0){
-  if(!musicOn)return;
-  ensureAudio(); if(!audioCtx)return;
-  const o=audioCtx.createOscillator(),g=audioCtx.createGain();
-  o.type=type;o.frequency.value=freq;
-  const t=audioCtx.currentTime+when;
-  g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);
-  o.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+dur+.02);
-}
-function beatSound(){
-  if(!musicOn)return;
-  const step=(beatNo-1)%4;
-  tone(step===0?720:480,.055,'square',step===0?.055:.028);
-  // city-pop-ish placeholder groove: kick/snare + bright offbeat
-  if(step===0||step===2)tone(82,.10,'sine',.05);
-  if(step===1||step===3)tone(190,.045,'triangle',.035);
-  tone(960,.025,'square',.012,.12);
-  // tiny bass movement
-  const bass=[110,123.47,146.83,130.81][step];
-  tone(bass,.18,'triangle',.018,.02);
-}
-function perfectChord(){
-  [261.63,329.63,392,493.88].forEach((f,i)=>tone(f,.45,'sine',.025,i*.025));
-}
-$('musicBtn').onclick=()=>{
-  musicOn=!musicOn;
-  $('musicBtn').textContent=musicOn?'♫ CITY POP':'♫ OFF';
-  if(musicOn)ensureAudio();
-};
-
-$('startBtn').onclick=()=>{
-  const incomplete=agents.findIndex(a=>last(a.r)!==a.g);
-  if(incomplete>=0){
-    selected=incomplete;draw();updateUI();flashTip(`사람 ${incomplete+1} 경로를 목적지까지 완성하세요`);
-    return;
-  }
-  ensureAudio();
-  running=true;steps=agents.map(()=>0);beatNo=0;updateUI();
-  tick();
-  timer=setInterval(tick,60000/stage.bpm);
-};
-function tick(){
-  beatNo++;
-  $('beatN').textContent=beatNo;
-  $('beat').classList.add('pulse');
-  subTimers.push(setTimeout(()=>$('beat').classList.remove('pulse'),100));
-  beatSound();
-
-  const prev=agents.map((a,i)=>a.r[Math.min(steps[i],a.r.length-1)]);
-  const next=agents.map((a,i)=>a.r[Math.min(steps[i]+1,a.r.length-1)]);
-
-  for(let i=0;i<agents.length;i++){
-    for(let j=i+1;j<agents.length;j++){
-      if(next[i]===next[j]){
-        return crash(`사람 ${i+1}과 ${j+1}이 ${beatNo}박째 같은 원에서 충돌`);
-      }
-      if(prev[i]===next[j]&&prev[j]===next[i]&&prev[i]!==prev[j]){
-        return crash(`사람 ${i+1}과 ${j+1}이 ${beatNo}박째 정면충돌`);
-      }
-    }
-  }
-
-  steps=steps.map((s,i)=>Math.min(s+1,agents[i].r.length-1));
-  const exec=steps.map((s,i)=>POS[agents[i].r[s]]);
-  draw(exec);
-
-  if(agents.every((a,i)=>steps[i]>=a.r.length-1)){
-    subTimers.push(setTimeout(()=>finish(true),180));
-  }
-}
-function crash(msg){
-  stopRun();
-  showResult(false,msg,0);
-}
-function finish(){
-  stopRun();
-  const beats=Math.max(...agents.map(a=>a.r.length-1));
-  const actions=agents.reduce((s,a)=>s+a.r.length-1,0);
-  let stars=1;
-  if(beats<=stage.optB && actions<=stage.optA)stars=3;
-  else if(beats<=stage.optB+1 && actions<=stage.optA+3)stars=2;
-  if(stars===3)perfectChord();
-
-  if(stars>progress.stars[stageIndex])progress.stars[stageIndex]=stars;
-  progress.unlocked=Math.max(progress.unlocked,Math.min(10,stageIndex+2));
-  saveProgress();
-  showResult(true,stars===3?'최적해에 도달했습니다.':stars===2?'거의 완벽합니다. 한 번 더 줄일 수 있어요.':'클리어! 더 짧은 흐름이 숨어 있습니다.',stars);
-}
-function showResult(ok,msg,stars){
-  const beats=Math.max(...agents.map(a=>a.r.length-1));
-  const actions=agents.reduce((s,a)=>s+a.r.length-1,0);
-  $('resultEye').textContent=ok?'CLEAR':'CRASH';
-  $('resultEye').className='eyebrow '+(ok?'good':'bad');
-  $('resultTitle').textContent=ok?(stars===3?'PERFECT FLOW':'STAGE CLEAR'):'충돌!';
-  $('resultStars').textContent=ok?'★'.repeat(stars)+'☆'.repeat(3-stars):'✕';
-  $('resultMsg').textContent=msg;
-  $('myBeats').textContent=beats;
-  $('myActions').textContent=actions;
-  $('optBeats').textContent=stage.optB;
-  $('optActions').textContent=stage.optA;
-  $('nextBtn').style.display=ok&&stageIndex<9?'block':'none';
-  $('result').classList.remove('hide');
-}
-$('retryBtn').onclick=()=>{
-  $('result').classList.add('hide');loadStage(stageIndex);
-};
-$('nextBtn').onclick=()=>{
-  $('result').classList.add('hide');loadStage(Math.min(9,stageIndex+1));
-};
-
-buildMap();
-showMap();
+$('undoBtn').onclick=()=>{if(running)return;const a=agents[selected];if(a.r.length>1)a.r.pop();drawStatic();updateUI()};
+function ensureAudio(){try{audioCtx??=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume()}catch(e){}}
+function tone(freq,dur=.06,type='square',vol=.025,delay=0){ensureAudio();if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.value=freq;const t=audioCtx.currentTime+delay;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+dur+.02)}
+function beatSound(){const s=(beatNo-1)%4;tone(s===0?720:440,.055,'square',s===0?.045:.022);if(s===0||s===2)tone(85,.10,'sine',.04);if(s===1||s===3)tone(190,.05,'triangle',.027)}
+function perfectSound(){[261.63,329.63,392,493.88].forEach((f,i)=>tone(f,.48,'sine',.024,i*.025))}
+$('startBtn').onclick=()=>{const incomplete=agents.findIndex(a=>last(a.r)!==a.g);if(incomplete>=0){selected=incomplete;drawStatic();updateUI();flashTip(`사람 ${incomplete+1} 경로를 목적지까지 완성하세요`);return}ensureAudio();running=true;beatNo=0;finishPending=false;exec={step:agents.map(()=>0),prev:agents.map(a=>a.s),next:agents.map(a=>a.s),arrived:agents.map(()=>false),arrivalBeat:agents.map(()=>null)};updateUI();tick();timer=setInterval(tick,tickDuration)};
+function tick(){if(!running||finishPending)return;beatNo++;$('beatN').textContent=beatNo;$('beat').classList.add('pulse');setTimeout(()=>$('beat').classList.remove('pulse'),100);beatSound();const prev=[],next=[],willMove=[];agents.forEach((a,i)=>{const s=exec.step[i],atEnd=s>=a.r.length-1;prev[i]=a.r[Math.min(s,a.r.length-1)];if(atEnd){next[i]=prev[i];willMove[i]=false}else{next[i]=a.r[s+1];willMove[i]=true}});for(let i=0;i<agents.length;i++){if(exec.arrived[i])continue;for(let j=i+1;j<agents.length;j++){if(exec.arrived[j])continue;if(willMove[i]&&willMove[j]&&next[i]===next[j])return crash(`사람 ${i+1}과 ${j+1}이 ${beatNo}박째 같은 곳에서 충돌`);if(willMove[i]&&willMove[j]&&prev[i]===next[j]&&prev[j]===next[i]&&prev[i]!==prev[j])return crash(`사람 ${i+1}과 ${j+1}이 ${beatNo}박째 정면충돌`);if(willMove[i]&&!willMove[j]&&!exec.arrived[j]&&next[i]===prev[j])return crash(`사람 ${i+1}이 ${beatNo}박째 사람 ${j+1}과 충돌`);if(willMove[j]&&!willMove[i]&&!exec.arrived[i]&&next[j]===prev[i])return crash(`사람 ${j+1}이 ${beatNo}박째 사람 ${i+1}과 충돌`)}}exec.prev=prev;exec.next=next;lastTickTime=performance.now();agents.forEach((a,i)=>{if(exec.arrived[i])return;if(willMove[i]){exec.step[i]++;if(exec.step[i]>=a.r.length-1){exec.arrivalBeat[i]=beatNo;setTimeout(()=>{if(exec)exec.arrived[i]=true},tickDuration*.73)}}});if(exec.arrivalBeat.every(v=>v!==null)){finishPending=true;setTimeout(()=>finish(),tickDuration*.82)}}
+function crash(msg){if(timer){clearInterval(timer);timer=null}running=false;finishPending=false;showResult(false,msg,0)}
+function finish(){if(timer){clearInterval(timer);timer=null}running=false;finishPending=false;const arrival=[...exec.arrivalBeat],finishBeat=Math.max(...arrival),sync=arrival.every(v=>v===arrival[0]);let stars=1;if(sync&&finishBeat===stage.perfectBeat)stars=3;else if(finishBeat<=stage.perfectBeat+1)stars=2;if(stars>progress.stars[stageIndex])progress.stars[stageIndex]=stars;progress.unlocked=Math.max(progress.unlocked,Math.min(STAGES.length,stageIndex+2));saveProgress();if(stars===3){perfectSound();const f=$('flash');f.classList.remove('go');void f.offsetWidth;f.classList.add('go')}const msg=stars===3?'최소 박자에 전원이 동시에 도착했습니다.':stars===2?(sync?'동시 도착 성공! 한 박 더 줄일 수 있어요.':'거의 완벽합니다. 도착 박자를 맞춰보세요.'):'클리어! 더 짧고 아름다운 흐름이 숨어 있습니다.';showResult(true,msg,stars,arrival,finishBeat,sync)}
+function showResult(ok,msg,stars=0,arrival=null,finishBeat=null,sync=false){$('resultEye').textContent=ok?'CLEAR':'CRASH';$('resultEye').className='eyebrow '+(ok?'good':'bad');$('resultTitle').textContent=ok?(stars===3?'PERFECT FLOW':'STAGE CLEAR'):'충돌!';$('resultStars').textContent=ok?'★'.repeat(stars)+'☆'.repeat(3-stars):'✕';$('resultMsg').textContent=msg;$('finishBeat').textContent=finishBeat??beatNo;$('perfectBeat').textContent=stage.perfectBeat;$('arrivalBeats').textContent=arrival?arrival.join(' · '):'—';$('syncResult').textContent=ok?(sync?'SYNC!':'NOT SYNC'):'—';$('nextBtn').style.display=ok&&stageIndex<STAGES.length-1?'block':'none';$('resultOverlay').classList.remove('hide')}
+$('retryBtn').onclick=()=>{$('resultOverlay').classList.add('hide');loadStage(stageIndex)};$('nextBtn').onclick=()=>{$('resultOverlay').classList.add('hide');loadStage(Math.min(STAGES.length-1,stageIndex+1))};$('mapBtn').onclick=showMap;
+buildMap();showMap();
 </script>
 </body>
 </html>
